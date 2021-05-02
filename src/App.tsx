@@ -1,41 +1,43 @@
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import './App.css';
 import PokemonList from './components/PokemonList';
 import Navbar from './components/Navbar';
-import axios, { Canceler } from 'axios';
 import Pagination from './components/Pagination';
-
-export interface Pokemon{
-
-  name:string,
-  url?: string,
-  type?: string,
-  sprite?: string,
-
-}
+import { getAllPokemons, getPokemon } from './services/PokemonService';
+import { Pokemon, ResponsePokelist, Result } from './PokeDefinitions'
 
 function App() {
 
-  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
   const [currentPageUrl, setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
   const [nextPageUrl, setNextPageUrl] = useState("");
-  const [prevPageUrl, setPreviousPage] = useState("");
+  const [prevPageUrl, setPreviousUrl] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [detailedPokemons, setDetailedPokemons] = useState<Pokemon[]>([]);
+  
   useEffect(() => {
 
     setLoading(true)
-    let cancel: Canceler
-    axios.get(currentPageUrl).then((res) => {
+    async function fetchPokemons() {
+      let response: ResponsePokelist = await getAllPokemons(currentPageUrl)
+      setNextPageUrl(response.next);
+      setPreviousUrl(response.previous ?? "");
+      await fetchDetailedPokemonList(response.results);
       setLoading(false)
-      setNextPageUrl(res.data.next)
-      setPreviousPage(res.data.previous)
-      const pokemons: Pokemon[] = res.data.results.map((p: Pokemon) => p)
-      setPokemon(pokemons) 
-    })
+    }
 
+    fetchPokemons();
 
   }, [currentPageUrl])
+
+  async function fetchDetailedPokemonList(data: Result[]) {
+
+    const detailedPokemons = data.map( async (pokemon: {name: string, url: string}) => await getPokemon(pokemon.url));
+    const pokemonData = await Promise.all(detailedPokemons)
+    console.log(pokemonData)
+    setDetailedPokemons(pokemonData)
+
+  }
+
 
   function goToNextPage(){
     setCurrentPageUrl(nextPageUrl);
@@ -49,18 +51,16 @@ function App() {
 
 
   return (
-   
-     <> 
-      <Navbar/>
-      <PokemonList pokelist={pokemon}/>
+      <> 
+        <Navbar/>
+        <PokemonList pokelist={detailedPokemons}/>
 
-      <Pagination 
-        goToNextPage={goToNextPage}
-        goToPrevPage={goToPrevPage}
-        hasNext = {nextPageUrl ?? null}
-        hasPrevious = {prevPageUrl ?? null}
-       />
-
+        <Pagination 
+          goToNextPage={goToNextPage}
+          goToPrevPage={goToPrevPage}
+          hasNext = {nextPageUrl ?? null}
+          hasPrevious = {prevPageUrl ?? null}
+        />
       </>
   );
 }
