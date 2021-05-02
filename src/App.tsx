@@ -1,25 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
+import PokemonList from './components/PokemonList';
+import Navbar from './components/Navbar';
+import axios, { Canceler } from 'axios';
+import Pagination from './components/Pagination';
+
+export interface Pokemon{
+
+  name:string,
+  url?: string,
+  type?: string,
+  sprite?: string,
+
+}
 
 function App() {
+
+  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
+  const [currentPageUrl, setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
+  const [nextPageUrl, setNextPageUrl] = useState("");
+  const [prevPageUrl, setPreviousPage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    setLoading(true)
+    let cancel: Canceler
+    axios.get(currentPageUrl).then((res) => {
+      setLoading(false)
+      setNextPageUrl(res.data.next)
+      setPreviousPage(res.data.previous)
+      const pokemons: Pokemon[] = res.data.results.map((p: Pokemon) => p)
+      setPokemon(pokemons) 
+    })
+
+
+  }, [currentPageUrl])
+
+  function goToNextPage(){
+    setCurrentPageUrl(nextPageUrl);
+  }
+
+  function goToPrevPage(){
+    setCurrentPageUrl(prevPageUrl);
+  }
+
+  if(loading) return <p>"Loading..."</p>
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   
+     <> 
+      <Navbar/>
+      <PokemonList pokelist={pokemon}/>
+
+      <Pagination 
+        goToNextPage={goToNextPage}
+        goToPrevPage={goToPrevPage}
+        hasNext = {nextPageUrl ?? null}
+        hasPrevious = {prevPageUrl ?? null}
+       />
+
+      </>
   );
 }
 
