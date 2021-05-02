@@ -1,4 +1,6 @@
 import { Pokemon } from '../PokeDefinitions'
+import styles from '../styles/PokemonList.module.css';
+import PokemonCard from './PokemonCard';
 
 interface PokemonListProps{
     pokelist: Pokemon[],
@@ -7,15 +9,15 @@ interface PokemonListProps{
 export default function PokemonList({pokelist}: PokemonListProps) {
     
     return (
-        <div>
+
+
+        <div className={styles.cardPokemons}>
+        <div className={styles.poke}>
             {pokelist.map(pokemon => (
-                <div key={pokemon.id}>
-                    {pokemon.name}
-                    {pokemon.types.map((type) => <div>{type.type.name}</div>)}
-                    <img src={pokemon.sprites.other['official-artwork'].front_default} />
-                    
-                </div>
+               <PokemonCard pokemon={pokemon}/>
             ))}
+            </div>
         </div>
+        
     )
 }

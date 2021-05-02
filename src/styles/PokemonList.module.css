@@ -1,0 +1,53 @@
+.cardPokemons{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.poke{
+ 
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.pokes{
+    display: flex;
+    background-color: aqua;
+    text-align: center;
+    padding: 5%;
+    margin: 5%;
+    background: #FFFFFF;
+    border: 1px solid #92BB84;
+    box-sizing: border-box;
+    box-shadow: 5px 4px 8px 6px rgba(124, 123, 123, 0.11);
+    border-radius: 8px;
+}
+
+.type, .typePoke{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+
+img{
+    width: 50%;
+}
+
+.namePoke{
+    font-size: 30px;
+    text-transform: capitalize;
+
+}
+
+.typePoke{
+    text-align: center;
+    display: flex;
+    font-size: 25px;
+
+}
