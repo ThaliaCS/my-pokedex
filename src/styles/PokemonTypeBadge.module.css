@@ -2,5 +2,10 @@
 
     text-align: center;
     display: flex;
-    font-size: 25px;
+    justify-content: center;
+    margin: 5px;
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 7px;
 }

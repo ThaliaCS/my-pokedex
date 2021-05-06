@@ -1,10 +1,13 @@
 import {useState, useEffect} from 'react';
 import './App.css';
+import styles from "../src/styles/Navbar.module.css";
 import PokemonList from './components/PokemonList';
 import Navbar from './components/Navbar';
 import Pagination from './components/Pagination';
 import { getAllPokemons, getPokemon } from './services/PokemonService';
 import { Pokemon, ResponsePokelist, Result } from './PokeDefinitions'
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import DescriptionPokemon from "./components/DescriptionPokemon";
 
 function App() {
 
@@ -47,20 +50,36 @@ function App() {
     setCurrentPageUrl(prevPageUrl);
   }
 
-  if(loading) return <p>"Loading..."</p>
+  if(loading) return <p className={styles.loading}> Loading...</p>
 
 
   return (
       <> 
+       <Router> 
         <Navbar/>
-        <PokemonList pokelist={detailedPokemons}/>
-
         <Pagination 
           goToNextPage={goToNextPage}
           goToPrevPage={goToPrevPage}
           hasNext = {nextPageUrl ?? null}
           hasPrevious = {prevPageUrl ?? null}
         />
+       <Switch>
+       <Route exact path="/pokemon/:pokemonIndex" component={DescriptionPokemon}/>  
+       <Route exact path="/">
+         <div>
+        <PokemonList pokelist={detailedPokemons}/>
+            
+        <Pagination 
+
+          goToNextPage={goToNextPage}
+          goToPrevPage={goToPrevPage}
+          hasNext = {nextPageUrl ?? null}
+          hasPrevious = {prevPageUrl ?? null}
+        />
+      </div>
+        </Route>
+        </Switch>
+     </Router> 
       </>
   );
 }
