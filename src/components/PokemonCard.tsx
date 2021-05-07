@@ -1,31 +1,24 @@
-import { useState } from "react";
 import { Pokemon } from "../PokeDefinitions";
 import styles from "../styles/PokemonList.module.css";
 import PokemonTypeBadge, { typeColors } from "./PokemonTypeBadge";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import DescriptionPokemon from "./DescriptionPokemon";
+import { Link } from "react-router-dom";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
 }
 
-interface myCustomProps {
-  pokemon: Pokemon;
-}
 export default function PokemonCard({ pokemon }: PokemonCardProps) {
   return (
-    //<Link to={`/pokemon/${pokemon.id}`}, pokemon >
-
     <div className={styles.cardPokemons}>
       <Link
+        style={{ textDecoration: 'none' }}
         to={{
           pathname: "/pokemon/" + pokemon.id,
-          state: { pokemon } 
-      
+          state: { pokemon }
         }}
       >
       <div className={styles.poke}>
-        <div key={pokemon.id}>
+        <div>
           <div
             style={{
               border: `3px solid ${typeColors[pokemon.types[0].type.name]}`,
@@ -35,9 +28,9 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
             <div className={styles.cardPokemon}>
               <div className={styles.namePoke}> {pokemon.name} </div>
               <div className={styles.type}>
-                {pokemon.types.map((type) => {
+                {pokemon.types.map((type, index) => {
                   //<div className={styles.typePoke}>{type.type.name}</div>
-                  return <PokemonTypeBadge type={type.type.name} />;
+                  return <PokemonTypeBadge key={index} type={type.type.name} />;
                 })}
               </div>
               <img
@@ -50,6 +43,5 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
       </div>
       </Link>
     </div>
-
   );
 }

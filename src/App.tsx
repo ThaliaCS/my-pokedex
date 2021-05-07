@@ -6,8 +6,8 @@ import Navbar from './components/Navbar';
 import Pagination from './components/Pagination';
 import { getAllPokemons, getPokemon } from './services/PokemonService';
 import { Pokemon, ResponsePokelist, Result } from './PokeDefinitions'
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import DescriptionPokemon from "./components/DescriptionPokemon";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import PokemonDetails from "./components/PokemonDetails";
 
 function App() {
 
@@ -41,7 +41,6 @@ function App() {
 
   }
 
-
   function goToNextPage(){
     setCurrentPageUrl(nextPageUrl);
   }
@@ -52,35 +51,32 @@ function App() {
 
   if(loading) return <p className={styles.loading}> Loading...</p>
 
-
   return (
-      <> 
-       <Router> 
-        <Navbar/>
-        <Pagination 
-          goToNextPage={goToNextPage}
-          goToPrevPage={goToPrevPage}
-          hasNext = {nextPageUrl ?? null}
-          hasPrevious = {prevPageUrl ?? null}
-        />
-       <Switch>
-       <Route exact path="/pokemon/:pokemonIndex" component={DescriptionPokemon}/>  
-       <Route exact path="/">
-         <div>
-        <PokemonList pokelist={detailedPokemons}/>
-            
-        <Pagination 
-
-          goToNextPage={goToNextPage}
-          goToPrevPage={goToPrevPage}
-          hasNext = {nextPageUrl ?? null}
-          hasPrevious = {prevPageUrl ?? null}
-        />
-      </div>
+    <> 
+      <Router> 
+      <Navbar/>
+      <Pagination 
+        goToNextPage={goToNextPage}
+        goToPrevPage={goToPrevPage}
+        hasNext = {nextPageUrl ?? null}
+        hasPrevious = {prevPageUrl ?? null}
+      />
+      <Switch>
+        <Route exact path="/pokemon/:pokemonIndex" component={PokemonDetails}/>  
+        <Route exact path="/">
+            <div>
+              <PokemonList pokelist={detailedPokemons}/>
+              <Pagination 
+                goToNextPage={goToNextPage}
+                goToPrevPage={goToPrevPage}
+                hasNext = {nextPageUrl ?? null}
+                hasPrevious = {prevPageUrl ?? null}
+              />
+            </div>
         </Route>
-        </Switch>
-     </Router> 
-      </>
+      </Switch>
+      </Router> 
+    </>
   );
 }
 
