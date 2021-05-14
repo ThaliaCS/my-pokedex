@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+
+App {
+  text-align: center;
+  height: 5000px;
+}
+
+.scrollTop {
+
+  position: fixed; 
+  width: 100%;
+  float: right;
+  width: 50px;
+  right: 10px;
+  bottom: 20px;
+  height: 20px;
+  color:rgba(228, 19, 19, 0.76);
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeIn 0.3s;
+  transition: opacity 0.4s;
+}
+
+.scrollTop:hover{
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}

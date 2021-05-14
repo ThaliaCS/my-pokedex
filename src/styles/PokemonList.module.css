@@ -34,8 +34,9 @@ body {
   margin: 10px;
 }
 
-img {
-  width: 40%;
+.imgPoke {
+  width: 230px;
+  height: 230px;
 }
 
 .namePoke {
@@ -66,5 +67,18 @@ img {
 .buttons button:hover{
 
     opacity: 0.9;
+
+}
+
+.loadingImg img{
+
+  width: 230px;
+  height: 230px;
+}
+
+.imgCards {
+
+  width: 400px;
+  height: 260px;
 
 }

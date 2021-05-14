@@ -1,86 +1,111 @@
-import {useState, useEffect} from 'react';
-import './App.css';
-import styles from "../src/styles/Navbar.module.css";
-import PokemonList from './components/PokemonList';
-import Navbar from './components/Navbar';
-import Pagination from './components/Pagination';
-import { getAllPokemons, getPokemon } from './services/PokemonService';
-import { Pokemon, ResponsePokelist, Result } from './PokeDefinitions'
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import DescriptionPokemon from "./components/DescriptionPokemon";
+import { useState, useEffect } from "react";
+import "./App.css";
+import PokemonList from "./components/PokemonList";
+import Navbar from "./components/Navbar";
+import Pagination from "./components/Pagination";
+import { getAllPokemons, getPokemon } from "./services/PokemonService";
+import { Pokemon, ResponsePokelist, Result } from "./PokeDefinitions";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import PokemonDetails from "./components/PokemonDetails";
+import { FaArrowCircleUp } from "react-icons/fa";
 
 function App() {
-
-  const [currentPageUrl, setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
+  const [currentPageUrl, setCurrentPageUrl] = useState(
+    "https://pokeapi.co/api/v2/pokemon"
+  );
   const [nextPageUrl, setNextPageUrl] = useState("");
   const [prevPageUrl, setPreviousUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [detailedPokemons, setDetailedPokemons] = useState<Pokemon[]>([]);
-  
-  useEffect(() => {
 
-    setLoading(true)
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
     async function fetchPokemons() {
-      let response: ResponsePokelist = await getAllPokemons(currentPageUrl)
+      let response: ResponsePokelist = await getAllPokemons(currentPageUrl);
       setNextPageUrl(response.next);
       setPreviousUrl(response.previous ?? "");
       await fetchDetailedPokemonList(response.results);
-      setLoading(false)
+      setLoading(false);
     }
 
     fetchPokemons();
-
-  }, [currentPageUrl])
+  }, [currentPageUrl]);
 
   async function fetchDetailedPokemonList(data: Result[]) {
-
-    const detailedPokemons = data.map( async (pokemon: {name: string, url: string}) => await getPokemon(pokemon.url));
-    const pokemonData = await Promise.all(detailedPokemons)
-    console.log(pokemonData)
-    setDetailedPokemons(pokemonData)
-
+    const detailedPokemons = data.map(
+      async (pokemon: { name: string; url: string }) =>
+        await getPokemon(pokemon.url)
+    );
+    const pokemonData = await Promise.all(detailedPokemons);
+    console.log(pokemonData);
+    setDetailedPokemons(pokemonData);
   }
 
-
-  function goToNextPage(){
+  function goToNextPage() {
     setCurrentPageUrl(nextPageUrl);
   }
 
-  function goToPrevPage(){
+  function goToPrevPage() {
     setCurrentPageUrl(prevPageUrl);
   }
 
-  if(loading) return <p className={styles.loading}> Loading...</p>
+  //Back to top button
 
+  const [showScroll, setShowScroll] = useState(false);
+  const checkScrollTop = () => {
+    if (!showScroll && window.pageYOffset > 100) {
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 400) {
+      setShowScroll(false);
+    }
+  };
+  window.addEventListener("scroll", checkScrollTop);
 
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
-      <> 
-       <Router> 
-        <Navbar/>
-        <Pagination 
-          goToNextPage={goToNextPage}
-          goToPrevPage={goToPrevPage}
-          hasNext = {nextPageUrl ?? null}
-          hasPrevious = {prevPageUrl ?? null}
+    <>
+       <FaArrowCircleUp
+          className="scrollTop"
+          onClick={scrollTop}
+          style={{ height: 40, display: showScroll ? "flex" : "none" }}
         />
-       <Switch>
-       <Route exact path="/pokemon/:pokemonIndex" component={DescriptionPokemon}/>  
-       <Route exact path="/">
-         <div>
-        <PokemonList pokelist={detailedPokemons}/>
-            
-        <Pagination 
+      <Router>
+     
+        <Navbar setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+        <Switch>
+          <Route
+            exact
+            path="/pokemon/:pokemonIndex"
+            component={PokemonDetails}
+          />
+          <Route exact path="/">
+            <Pagination
+              goToNextPage={goToNextPage}
+              goToPrevPage={goToPrevPage}
+              hasNext={nextPageUrl ?? null}
+              hasPrevious={prevPageUrl ?? null}
+            />
 
-          goToNextPage={goToNextPage}
-          goToPrevPage={goToPrevPage}
-          hasNext = {nextPageUrl ?? null}
-          hasPrevious = {prevPageUrl ?? null}
-        />
-      </div>
-        </Route>
+            <PokemonList
+              setSearchTerm={setSearchTerm}
+              searchTerm={searchTerm}
+              pokelist={detailedPokemons}
+            />
+
+            <Pagination
+              goToNextPage={goToNextPage}
+              goToPrevPage={goToPrevPage}
+              hasNext={nextPageUrl ?? null}
+              hasPrevious={prevPageUrl ?? null}
+            />
+          </Route>
         </Switch>
-     </Router> 
-      </>
+      </Router>
+    </>
   );
 }
 
