@@ -1,6 +1,6 @@
 # Preview
 
-<img src="https://i.imgur.com/hRQBB00.png"/>
+<img src="https://i.imgur.com/puEsAWB.png"/>
 
 
 # Getting Started with Create React App
